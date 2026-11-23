@@ -1,0 +1,46 @@
+const ROUTE_ENEMIES={
+ mossling:{id:'mossling',name:'Mossling',cell:0,hp:40,xp:24,drop:'barkCharm',attacks:['roots','seedburst'],colors:['#bdd99b','#d2bd8a','#a3e8ce'],acts:[['Offer Leaf','You offer a fallen leaf. Mossling inspects its veins.'],['Hum','Your tune sounds like rain on a mushroom cap.'],['Listen','The little creature is practicing its forest song.']]},
+ dewdrop:{id:'dewdrop',name:'Dewdrop',cell:1,hp:38,xp:26,drop:'dewLocket',attacks:['petals','ringGate'],colors:['#a4e7dc','#b6e8f3','#baf3ca'],acts:[['Share Water','You pour a little water onto a thirsty fern.'],['Smile','Dewdrop reflects your smile in a perfect bubble.'],['Listen','The creek has stories about the bridge.']]},
+ thornmoth:{id:'thornmoth',name:'Thornmoth',cell:2,hp:44,xp:30,drop:'bramblePin',attacks:['petals','shower'],colors:['#ebcd8e','#c3e59c','#d6d1f3'],acts:[['Admire Wings','You admire the leaf patterns on its wings.'],['Offer Flower','A fallen flower makes a fine resting place.'],['Listen','Its wings whisper directions through the grove.']]},
+ sprig:{id:'sprig',name:'Hollow Sprig',cell:3,hp:50,xp:34,drop:'cedarFang',attacks:['brambles','wisps'],colors:['#c1d99c','#d9be93','#a3e8c4'],acts:[['Mend Twig','You bind a cracked twig with a soft blade of grass.'],['Offer Seed','The seed fits perfectly in a hollow of its bark.'],['Listen','There is a very small heartbeat inside the old wood.']]}
+};
+const ROUTE_SPAWNS=[{id:'cedar-moss',room:'cedar',enemy:'mossling',x:333,y:340},{id:'cedar-dew',room:'cedar',enemy:'dewdrop',x:647,y:447},{id:'cedar-moss-east',room:'cedar',enemy:'mossling',x:681,y:295},{id:'briar-moth',room:'briarway',enemy:'thornmoth',x:335,y:300},{id:'briar-sprig',room:'briarway',enemy:'sprig',x:628,y:421},{id:'briar-moth-east',room:'briarway',enemy:'thornmoth',x:682,y:280}];
+for(const key of ['cedar','briarway','creatures']){const image=new Image();image.src='assets/'+key+'-v10.png';paintedWorld[key]=image;}
+function routeCleared(id){return game.flags.routeCleared?.[id]===true;}
+function talkToRouteCreature(spawn){if(routeCleared(spawn.id))return ['The creature has returned to the trees. Rest at camp if you want to meet the woodland creatures again.'];game.routeTarget=spawn.id;startBattle('briar',false,spawn.enemy);return null;}
+function restOnTrail(){game.flags.routeCleared={};applyHeroStats();game.player.hp=game.player.maxHp;refillProvisions();saveAdventure();return ['You rest beside the cedar lantern. Your HP and provisions are restored.','The woodland creatures return to the paths. Your levels and equipment stay with you.'];}
+function trailChest(){if(game.flags.trailChest)return ['The travel chest is empty. Its latch glints in the sunlight.'];if(game.player.items.length>=6)return ['Your provisions are full. Use an item in battle, then return for the berries.'];game.flags.trailChest=true;const count=Math.min(2,6-game.player.items.length);for(let i=0;i<count;i++)game.player.items.push({name:'Trail Berry',heal:8});saveAdventure();return [`Inside the old chest: ${count} Trail ${count===1?'Berry':'Berries'}. Each restores 8 HP in battle.`];}
+const routeBounds=[rect(350,128,260,505),rect(130,246,700,264)];
+rooms.cedar={name:'Cedar Path',bounds:routeBounds,solids:[rect(130,300,121,60)],exits:[{area:rect(430,134,100,25),to:'briarway',spawn:{x:480,y:540,facing:'up'}},{area:rect(425,594,110,26),to:'cottage',spawn:{x:478,y:478,facing:'up'}}],interactables:[{name:'Lantern Camp',area:rect(160,296,92,68),talk:restOnTrail}]};
+rooms.briarway={name:'Briarway',bounds:routeBounds,solids:[rect(100,220,100,110),rect(189,351,80,45)],exits:[{area:rect(430,138,100,25),to:'city',spawn:{x:480,y:550,facing:'up'}},{area:rect(425,594,110,26),to:'cedar',spawn:{x:480,y:205,facing:'down'}}],interactables:[{name:'Travel Chest',area:rect(184,343,90,58),talk:trailChest}]};
+for(const spawn of ROUTE_SPAWNS){rooms[spawn.room].interactables.push({name:ROUTE_ENEMIES[spawn.enemy].name,area:rect(spawn.x-25,spawn.y-30,50,48),available:()=>!routeCleared(spawn.id),talk:()=>talkToRouteCreature(spawn)});}
+rooms.city.exits[0]={area:rect(425,603,110,23),to:'briarway',spawn:{x:480,y:205,facing:'down'}};
+const trailMap={name:'Woodland Trail Map',area:rect(761,231,82,60),talk:()=>{if(!game.flags.cityUnlocked)return ['A map traces a road through cedar woods to Verdant Crossing.','Mallow says the road will open when Nyx rings the bell.'];travelFromCottage();return null;}};
+rooms.cottage.interactables.push(trailMap);
+function travelFromCottage(){if(game.battle||game.room!=='cottage'||!game.flags.cityUnlocked)return false;setDialog(['The trail map shows the way: Cottage, Cedar Path, Briarway, Verdant Crossing.','The old woodland road is open in both directions.'],()=>{game.mode='overworld';changeRoom('cedar',{x:480,y:540,facing:'up'});});return true;}
+function configureRouteBattle(b,id){
+ const enemy=ROUTE_ENEMIES[id];if(!enemy)return;
+ b.routeEnemy=enemy;b.routeSpawn=game.routeTarget;b.practice=false;b.patternPractice=true;b.awakened=false;b.mechanicPractice=null;b.forcedAttackId=null;
+ b.boss={...BOSSES.briar,name:enemy.name,short:enemy.name,colors:enemy.colors,phases:['WOODLAND ENCOUNTER','WOODLAND ENCOUNTER','WOODLAND ENCOUNTER'],acts:enemy.acts,intro:[`${enemy.name} steps onto the woodland path.`,'Fight or use ACT and SPARE. Both earn XP and equipment.']};b.bossHp=enemy.hp;b.bossMaxHp=enemy.hp;b.config={...b.config,speed:b.config.speed*.82,damage:b.config.damage*.55};b.text='A woodland encounter. Learn its pattern, or make a friend.';
+}
+function routeAttack(b){const ids=b.routeEnemy.attacks,id=ids[(b.turn-1)%ids.length],extra={ringGate:{name:'Creek Ripples',hint:'Follow the opening in each expanding ripple.'},shower:{name:'Pollen Shower',hint:'Move between the falling flecks of pollen.'},wisps:{name:'Cedar Sparks',hint:'Bait the little lights, then leave their path.'}};return ATTACKS.find(a=>a.id===id)||{id,...extra[id]};}
+function completeRouteEncounter(b=game.battle){
+ if(!b?.routeEnemy||b.routeRewarded)return false;b.routeRewarded=true;b.won=true;clearMovementArena(b);b.bullets=[];b.beams=[];b.hazards=[];game.mode='battleEnd';
+ game.flags.routeCleared??={};if(b.routeSpawn){game.flags.routeCleared[b.routeSpawn]=true;game.flags.routeHistory??=[];if(!game.flags.routeHistory.includes(b.routeSpawn))game.flags.routeHistory.push(b.routeSpawn);}
+ const level=grantExperience(b.routeEnemy.xp),gear=grantGear(b.routeEnemy.drop),lines=[`${b.routeEnemy.name} ${b.ending==='mercy'?'makes room for you on the path.':'bounds back into the trees.'}`,`+${b.routeEnemy.xp} XP. Fighting and sparing earn the same rewards.`,...(level?[level]:[]),...(gear?[gear]:[])];
+ if(!gear&&game.player.items.length<6){game.player.items.push({name:'Trail Berry',heal:8});lines.push('You found a Trail Berry: restores 8 HP.');}
+ game.message=dialog(lines,()=>{game.battle=null;game.mode='overworld';document.body?.classList.remove('in-battle');saveAdventure();updateDemoInterface();updateAdventureUI();});return true;
+}
+function recoverFromTrail(){game.battle=null;game.paused=false;game.mode='overworld';game.message=null;applyHeroStats();game.player.hp=game.player.maxHp;refillProvisions();changeRoom('cottage',{x:478,y:478,facing:'up'});setDialog(['Mallow finds you beside the woodland road and brings you home.','Your levels and equipment are safe. Rest, then use the trail map to try again.']);return true;}
+function drawTrailMap(){
+ const x=772,y=241;ctx.save();ctx.shadowColor='#16100899';ctx.shadowBlur=7;const wood=ctx.createLinearGradient(x,y,x+64,y+44);wood.addColorStop(0,'#997246');wood.addColorStop(.4,'#65452b');wood.addColorStop(1,'#38271e');ctx.fillStyle=wood;roundRect(x-7,y-6,76,54,5,true);ctx.fillStyle='#d8c18e';roundRect(x,y,62,40,3,true);ctx.strokeStyle='#587454';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x+6,y+33);ctx.bezierCurveTo(x+45,y+35,x+15,y+7,x+53,y+8);ctx.stroke();for(const [dx,dy]of [[7,30],[30,20],[54,8]]){ctx.fillStyle='#48634b';ctx.beginPath();ctx.arc(x+dx,y+dy,3,0,Math.PI*2);ctx.fill();}ctx.fillStyle='#34281e';ctx.fillRect(x+9,y+44,5,10);ctx.fillRect(x+49,y+44,5,10);ctx.restore();pixelText(game.flags.cityUnlocked?'WOODLAND TRAIL':'TRAIL MAP',803,225,12,'#f2ddb2','center');
+}
+function drawRouteRoom(){
+ const room=game.room;if(artReady(paintedWorld[room]))ctx.drawImage(paintedWorld[room],0,0,W,H);else fillGradient('#284c35','#a29a60');
+ const actors=[{y:game.player.y,draw:drawPlayer}];
+ for(const spawn of ROUTE_SPAWNS.filter(s=>s.room===room&&!routeCleared(s.id))){const enemy=ROUTE_ENEMIES[spawn.enemy];actors.push({y:spawn.y,draw:()=>{ctx.save();ctx.fillStyle='#122b2038';ctx.beginPath();ctx.ellipse(spawn.x,spawn.y+3,24,6,0,0,Math.PI*2);ctx.fill();ctx.restore();paintCharacter(paintedWorld.creatures,spawn.x,spawn.y+4,83+(reduceMotion?0:Math.sin((game.worldClock||0)*1.6+enemy.cell)*.6),{atlasCell:enemy.cell});}});}
+ for(const actor of actors.sort((a,b)=>a.y-b.y))actor.draw();
+ const text=room==='cedar'?'BRIARWAY · NORTH     COTTAGE · SOUTH':'VERDANT CROSSING · NORTH     CEDAR PATH · SOUTH';ctx.fillStyle='#13271edb';roundRect(225,74,510,33,10,true);pixelText(text,480,91,13,'#efe1b9','center');
+ if(room==='cedar'){pixelText('LANTERN CAMP',202,276,13,'#f8e5b6','center');}else if(game.flags.trailChest){ctx.fillStyle='#263b2b99';ctx.fillRect(192,350,70,26);}
+ drawRoomHud();
+}
