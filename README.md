@@ -5,6 +5,8 @@ and changing bullet-dodge battles. Built with JavaScript, HTML, CSS, and Canvas.
 
 ## Play
 
+[Play Whiskerfall in your browser](https://schwjh03.github.io/Whiskerfall-Cottage/).
+
 The game needs a modern browser. There is no account, installer, or backend.
 Progress and personal bests stay in the browser used to play.
 
