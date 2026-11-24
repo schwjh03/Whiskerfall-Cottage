@@ -89,3 +89,7 @@ runtime movement, interface elements, and effects are drawn in Canvas.
 
 This is an evolving prototype with two story guardians. Saves are local to the
 current browser and website origin; there is no cloud synchronization.
+
+## Readability update
+
+The default interface uses 18px system text with larger controls and brighter contrast. Canvas text has a 16px minimum at its original resolution, and dialogue uses 22px text. A separate Story text panel displays the full current line at normal browser text size, so it remains readable on a phone or with browser zoom. Continue advances the current line; gameplay and saved adventures remain compatible.

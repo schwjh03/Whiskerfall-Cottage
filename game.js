@@ -430,9 +430,9 @@ function drawBasement() {
 
 function drawDialogBox(){
   const line=game.message.lines[game.message.index]??'';const shown=line.slice(0,Math.floor(game.message.char));
-  ctx.fillStyle='#101c24ee';roundRect(77,501,806,113,12,true);ctx.strokeStyle='#a1b4a2';ctx.lineWidth=1;roundRect(77,501,806,113,12,false);ctx.stroke();ctx.fillStyle='#a8cbb1';ctx.fillRect(78,519,3,76);
-  const lines=wrapText(shown,690,18);lines.slice(0,2).forEach((part,i)=>pixelText(part,105,536+i*27,18,'#efead7'));
-  if(game.message.char>=line.length)pixelText('Z / ENTER  ↘',849,593,10,'#b8d9bd','right');
+  ctx.fillStyle='#101c24ee';roundRect(62,493,836,130,12,true);ctx.strokeStyle='#a1b4a2';ctx.lineWidth=1;roundRect(62,493,836,130,12,false);ctx.stroke();ctx.fillStyle='#a8cbb1';ctx.fillRect(63,507,4,98);
+  const lines=wrapText(shown,758,22);lines.slice(0,3).forEach((part,i)=>pixelText(part,90,518+i*28,22,'#fff8e9'));
+  if(game.message.char>=line.length)pixelText('Z / ENTER  ↘',868,607,16,'#e1f5e6','right');
 }
 
 function drawPlayer() {
@@ -955,17 +955,21 @@ function triangle(x1, y1, x2, y2, x3, y3, color) {
 }
 
 function pixelText(text, x, y, size = 18, color = "#fff", align = "left") {
-  ctx.font = `700 ${size}px "Trebuchet MS", system-ui, sans-serif`;
+  size = Math.max(16, size);
+  ctx.font = `600 ${size}px system-ui, sans-serif`;
   ctx.textAlign = align;
   ctx.textBaseline = "middle";
-  ctx.fillStyle = "#000";
-  ctx.fillText(text, x + 2, y + 2);
+  ctx.strokeStyle = "#07101c";
+  ctx.lineWidth = 3;
+  ctx.lineJoin = "round";
+  ctx.strokeText(text, x, y);
   ctx.fillStyle = color;
   ctx.fillText(text, x, y);
 }
 
 function wrapText(text, maxWidth, size) {
-  ctx.font = `700 ${size}px "Trebuchet MS", system-ui, sans-serif`;
+  size = Math.max(16, size);
+  ctx.font = `600 ${size}px system-ui, sans-serif`;
   const words = text.split(" ");
   const lines = [];
   let line = "";
@@ -1015,7 +1019,16 @@ function drawAtmosphere(scene){
   const t=performance.now()/1000;ctx.save();for(let i=0;i<22;i++){const x=scene==='title'?(i*109+Math.sin(t*.3+i)*21+W)%W:160+(i*83%640)+Math.sin(t*.2+i)*12;const y=110+((i*47-t*7)%345+345)%345;ctx.globalAlpha=.15+(Math.sin(t+i)+1)*.12;ctx.fillStyle=scene==='title'?'#d5df9d':'#ead8b2';ctx.beginPath();ctx.arc(x,y,i%4===0?2:1,0,Math.PI*2);ctx.fill();}ctx.restore();
   const shade=ctx.createRadialGradient(480,320,210,480,320,590);shade.addColorStop(0,'#0000');shade.addColorStop(1,'#07121a9e');ctx.fillStyle=shade;ctx.fillRect(0,0,W,H);
 }
+function updateReadingPanel(){
+ const panel=document.querySelector('#reading-panel'),line=document.querySelector('#reading-line'),next=document.querySelector('#reading-continue');
+ if(!panel||!line||!next)return;
+ const message=game.message?.lines[game.message.index];
+ panel.hidden=!message;
+ if(message&&line.textContent!==message)line.textContent=message;
+ next.hidden=!message;
+}
 function updateDemoInterface(){
+ updateReadingPanel();
  if(game.battle)return;updateMovementUI(null);document.body?.classList.remove('in-battle');
  const state=document.querySelector('#scene-state'),quest=document.querySelector('#quest-note');if(!state)return;
  const label=game.mode==='title'?'Ready to explore':rooms[game.room].name;
@@ -1027,6 +1040,11 @@ function updateDemoInterface(){
  const preview=document.querySelector('#city-preview');if(preview)preview.disabled=Boolean(game.battle)||game.flags.cityUnlocked;
 }
 
+document.querySelector('#reading-continue')?.addEventListener('click',()=>{
+ if(!game.message||game.paused)return;
+ game.message.char=game.message.lines[game.message.index].length;
+ handleConfirm();updateReadingPanel();
+});
 setInterval(updateDemoInterface,300);
 function controlKey(key){
  if(!gameReady)return;

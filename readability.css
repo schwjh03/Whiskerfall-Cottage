@@ -1,0 +1,61 @@
+/* Clear system type and full-size story text, including on mobile. */
+:root { --ink:#f7faf5; --muted:#d1ded6; font:18px/1.6 system-ui,Segoe UI,Arial,sans-serif; }
+body { font-family:system-ui,Segoe UI,Arial,sans-serif; }
+.demo-shell { width:min(1510px,calc(100% - 40px)); }
+.demo-nav,footer { color:#cbdcd2; font-size:.875rem; }
+.demo-nav>span:not(.session-badge),.session-badge,.eyebrow,.control-guide .eyebrow { font-size:.8rem; letter-spacing:.08em; }
+h1 { font-size:2.3rem; } h2 { color:#f1f5df; font-size:1.4rem; }
+.shell,.in-battle .shell { grid-template-columns:minmax(0,1fr) 340px; gap:22px; }
+.side-panel,.in-battle .side-panel { grid-column:2; grid-row:1 / span 2; padding:22px; display:block; }
+.side-panel p,#quest-note,.side-panel #quest-note,.in-battle #battle-status,.in-battle .personal-best,.technique-note { font-size:1rem!important; color:#dce8e0; line-height:1.65; }
+button,select,input { font-family:inherit; }
+#begin-story,#city-preview,#city-travel,.battle-tools button,.battle-tools select,.battle-choice-buttons button,.adventure-pack button,.journal-quest button { font-size:.9rem; line-height:1.4; min-height:48px; }
+#begin-story { color:#102d22; font-weight:700; padding:14px; }
+.battle-tools { grid-template-columns:1fr; gap:9px; }
+.battle-tools label,.battle-tools select,.battle-tools #boss-select,.battle-tools label[for=boss-select],.battle-tools .practice-start,.battle-tools #challenge-nyx { grid-column:1; grid-row:auto; font-size:.9rem; }
+.battle-tools label { color:#e4eadd; margin-top:7px; }
+.battle-tools button { color:#f4f6ff; }
+.battle-tools #challenge-nyx { color:#1e1435; font-weight:700; }
+.adventure-pack>p,.adventure-pack summary,.adventure-pack #gear-pack p,.quest-journal summary,.journal-quest strong,.control-guide dt,.control-guide dd>span,.hazard-legend span,.chapter { font-size:.9rem; }
+.adventure-pack>p { color:#f1f5df; }
+.journal-quest p { font-size:1rem!important; }
+.control-guide kbd { font:700 .875rem system-ui; min-width:30px; height:32px; }
+.reading-panel { grid-column:1; grid-row:2; padding:22px 26px; border:1px solid #728f89; border-radius:12px; background:#101e28; color:#fff9e8; }
+.reading-panel[hidden] { display:none; }
+.reading-panel h2 { font:700 .8rem system-ui; color:#b5d5c8; text-transform:uppercase; letter-spacing:.08em; margin:0 0 12px; }
+#reading-line { font-size:1.15rem; line-height:1.7; margin:0 0 18px; }
+#reading-continue { background:#d4e9cd; color:#163426; border:0; border-radius:7px; padding:12px 18px; font-size:1rem; font-weight:700; min-height:48px; }
+.touch-controls { opacity:1; max-width:none; }
+.touch-controls button,.touch-controls .action-pad button { font-size:.9rem; color:#edf8ef; border-color:#69877b; min-width:46px; min-height:48px; }
+.touch-controls .action-pad button span { font-size:.9rem; opacity:1; }
+.in-battle .side-panel { max-height:calc(100vh - 80px); }
+canvas { image-rendering:auto; }
+@media(max-width:1100px) {
+ .shell,.in-battle .shell { grid-template-columns:1fr; }
+ .side-panel,.in-battle .side-panel { grid-column:1; grid-row:auto; max-height:none; overflow:visible; display:block; }
+ .reading-panel { grid-row:auto; }
+ .in-battle .game-frame { position:relative; top:auto; }
+ .battle-tools { grid-template-columns:1fr 1fr; }
+ .battle-tools label,.battle-tools select,.battle-tools #boss-select,.battle-tools label[for=boss-select] { grid-column:auto; }
+ .battle-tools #attack-select,.battle-tools label[for=attack-select],.battle-tools #movement-practice,.battle-tools label[for=movement-practice],.battle-tools .practice-start,.battle-tools #challenge-nyx,.attack-catalog-summary { grid-column:1/-1; }
+ .in-battle canvas { max-height:none; }
+}
+@media(max-width:550px) {
+ .demo-shell { width:calc(100% - 24px); }
+ .demo-nav { padding:16px 0; } header { padding:22px 0; }
+ h1 { font-size:1.8rem; } .side-panel,.in-battle .side-panel { padding:20px; }
+ .reading-panel { padding:20px; } #reading-line { font-size:1.05rem; }
+ .battle-tools { grid-template-columns:1fr; }
+ .battle-tools label,.battle-tools select,.battle-tools #boss-select,.battle-tools label[for=boss-select] { grid-column:1; }
+ .touch-controls { position:static; display:flex; flex-direction:column; gap:12px; }
+ .touch-controls .action-pad { flex-wrap:wrap; justify-content:center; }
+ .in-battle .touch-controls { display:flex; }
+ .in-battle .demo-shell { width:calc(100% - 20px); }
+ .chapter { display:none; }
+}
+
+/* Keep old compact selectors from shrinking primary controls. */
+.side-panel #begin-story,.battle-tools button,.battle-tools select,.battle-choice-buttons button,.touch-controls .action-pad button { font-size:1rem!important; }
+@media(max-width:550px){.battle-tools>label,.battle-tools>select,.battle-tools>button,.battle-tools>p { grid-column:1/-1!important; grid-row:auto!important; }.battle-tools{grid-template-columns:minmax(0,1fr)!important}.battle-tools>select{width:100%;min-width:0}.side-panel{min-width:0}.battle-tools .practice-start{flex-wrap:wrap}}
+
+.side-panel #begin-story { width:100%; max-width:none; }
