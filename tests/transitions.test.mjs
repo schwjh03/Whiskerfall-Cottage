@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { runInNewContext } from 'node:vm';
 import test from 'node:test';
 
-const source=readFileSync(new URL('../game.js',import.meta.url),'utf8')+'\n'+readFileSync(new URL('../world-art.js',import.meta.url),'utf8')+'\n'+readFileSync(new URL('../bosses.js',import.meta.url),'utf8')+'\n'+readFileSync(new URL('../attack-director.js',import.meta.url),'utf8')+'\n'+readFileSync(new URL('../choreography.js',import.meta.url),'utf8')+'\n'+readFileSync(new URL('../organic-effects.js',import.meta.url),'utf8')+'\n'+readFileSync(new URL('../city-chapter.js',import.meta.url),'utf8')+'\n'+readFileSync(new URL('../sustained-attacks.js',import.meta.url),'utf8')+'\n'+readFileSync(new URL('../idle-animation.js',import.meta.url),'utf8')+'\n'+readFileSync(new URL('../movement-modes.js',import.meta.url),'utf8')+'\n'+readFileSync(new URL('../woodland-journey.js',import.meta.url),'utf8')+'\n'+readFileSync(new URL('../adventure-progress.js',import.meta.url),'utf8')+'\n'+readFileSync(new URL('../combat-dynamics.js',import.meta.url),'utf8')+'\n'+readFileSync(new URL('../battle.js',import.meta.url),'utf8');
+const source=readFileSync(new URL('../game.js',import.meta.url),'utf8')+'\n'+readFileSync(new URL('../world-art.js',import.meta.url),'utf8')+'\n'+readFileSync(new URL('../bosses.js',import.meta.url),'utf8')+'\n'+readFileSync(new URL('../attack-director.js',import.meta.url),'utf8')+'\n'+readFileSync(new URL('../choreography.js',import.meta.url),'utf8')+'\n'+readFileSync(new URL('../organic-effects.js',import.meta.url),'utf8')+'\n'+readFileSync(new URL('../city-chapter.js',import.meta.url),'utf8')+'\n'+readFileSync(new URL('../sustained-attacks.js',import.meta.url),'utf8')+'\n'+readFileSync(new URL('../idle-animation.js',import.meta.url),'utf8')+'\n'+readFileSync(new URL('../movement-modes.js',import.meta.url),'utf8')+'\n'+readFileSync(new URL('../woodland-journey.js',import.meta.url),'utf8')+'\n'+readFileSync(new URL('../adventure-progress.js',import.meta.url),'utf8')+'\n'+readFileSync(new URL('../combat-dynamics.js',import.meta.url),'utf8')+'\n'+readFileSync(new URL('../observatory-chapter.js',import.meta.url),'utf8')+'\n'+readFileSync(new URL('../battle.js',import.meta.url),'utf8');
 function loadGame(){
   const element={addEventListener(){},classList:{add(){},remove(){}},blur(){},textContent:''};
   const gradient={addColorStop(){}};
@@ -32,7 +32,7 @@ test('every room arrival is clear of walls and reverse exit triggers',()=>{
 });
 
 test('painted furniture leaves a connected walking route to every story interaction',()=>{
- const api=loadGame();for(const [room,origin]of [['cottage',[468,500]],['basement',[478,480]],['city',[480,550]],['cedar',[480,540]],['briarway',[480,540]]]){
+ const api=loadGame();for(const [room,origin]of [['cottage',[468,500]],['basement',[478,480]],['city',[480,550]],['cedar',[480,540]],['briarway',[480,540]],['canal',[480,548]],['observatory',[480,546]]]){
   api.game.room=room;const queue=[origin],seen=new Set([origin.join(',')]),reachable=new Set();
   for(let i=0;i<queue.length;i++){const [x,y]=queue[i];Object.assign(api.game.player,{x,y});for(const facing of ['up','down','left','right']){api.game.player.facing=facing;const target=api.nearestInteractable();if(target)reachable.add(target.name);}
    for(const [dx,dy]of [[8,0],[-8,0],[0,8],[0,-8]]){const nx=x+dx,ny=y+dy,key=nx+','+ny;if(nx<0||nx>960||ny<0||ny>640||seen.has(key)||api.blocked({x:nx-9,y:ny+8,w:18,h:12}))continue;seen.add(key);queue.push([nx,ny]);}}

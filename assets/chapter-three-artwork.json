@@ -1,0 +1,14 @@
+{
+  "tool": "Built-in image_gen",
+  "purpose": "Whiskerfall chapter-three environment backgrounds",
+  "assets": [
+    {
+      "file": "canal-walk-v13.png",
+      "prompt": "Use case: illustration-story. Asset type: final painted background for Whiskerfall Cottage, a top-down adventure game, landscape 1536x1024. A warm storybook catfolk canal district beyond an ivy-overgrown medieval village. Golden late-afternoon light, painterly richly textured stone, terracotta roofs, creeping ivy, wildflowers, cat-face carvings. Camera is slightly elevated looking across a small navigable plaza, matching an illustrated RPG backdrop, no people or creatures. IMPORTANT gameplay layout: the lower half contains a broad unobstructed stone towpath across the whole image; a narrow calm blue-green canal runs horizontally across the upper-middle between that path and old houses. One stone footbridge at the center leads north toward a little disused railway station in the far background. A moored wooden courier boat and a parcel bench are at the left edge of the towpath; a rusty signal lever and small lantern are near its right edge. Leave a clear exit at the lower center and clear passage toward the upper-center bridge. Cohesive hand-painted fantasy environment, detailed but calm, credible scale, no UI, no legible text, no lettering, no watermark, no hard black outlines. Not pixel art, not a flat vector illustration. All characters will be drawn later by the game."
+    },
+    {
+      "file": "glass-observatory-v13.png",
+      "prompt": "Use case: illustration-story. Asset type: final painted environment background for Whiskerfall Cottage, landscape 1536x1024. Interior of a forgotten catfolk astronomical observatory overtaken by flowering ivy. Warm polished brass mechanisms, old cream stone, curved timber bookcases at the sides, a broken domed roof opening to a deep blue twilight sky. Hand-painted rich storybook fantasy art, softly realistic materials, amber lanterns and cool starlight. Elevated RPG camera looking across the room. IMPORTANT gameplay layout: keep the lower half and center of the floor broad, flat and unobstructed, a circular stone mosaic with subtle constellation markings. At the far back center stands an ornate mechanical orrery on a low dais, room to place a character in front of it later. Three separate low brass pedestals stand along the back-left, back-middle-left, and back-right edges, with moon, leaf, and star motifs but no readable text. A clear doorway at bottom center, gentle readable geometry, furniture at the periphery rather than on the walkable central floor. No people, no creatures, no characters, no UI, no lettering or watermark. Not pixel art or flat vector art; a cohesive companion to a sunlit overgrown medieval village backdrop."
+    }
+  ]
+}

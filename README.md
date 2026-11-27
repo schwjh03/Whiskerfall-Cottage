@@ -93,3 +93,11 @@ current browser and website origin; there is no cloud synchronization.
 ## Readability update
 
 The default interface uses 18px system text with larger controls and brighter contrast. Canvas text has a 16px minimum at its original resolution, and dialogue uses 22px text. A separate Story text panel displays the full current line at normal browser text size, so it remains readable on a phone or with browser zoom. Continue advances the current line; gameplay and saved adventures remain compatible.
+
+## The Glass Observatory
+
+After resolving Briarhart, speak with Pip. His last letter can travel through Mallow at the cottage or directly along the new Canal Walk. Meet Tamsin, follow the bridge, align three lenses using the star chart, and resolve the Living Orrery's story encounter. Both routes have their own dialogue and ending. Return paths stay open, and a two-part journal chain awards the Wayfarer Compass once.
+
+The visible **Preview chapter 3** button lets visitors explore this chapter without changing their saved adventure. **Return to my adventure** restores the prior session. New room artwork is in `assets/canal-walk-v13.png` and `assets/glass-observatory-v13.png`; exact generation prompts and provenance are in `assets/chapter-three-artwork.json`.
+
+Validation: `node --test tests/gameplay.test.mjs tests/transitions.test.mjs` covers 78 checks, including both letter routes, lens gates, migrations, rewards and walking connections.

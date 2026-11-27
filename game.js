@@ -227,7 +227,8 @@ function updateOverworld(dt) {
   const room = rooms[game.room];
   for (const exit of room.exits) {
     if (intersects(playerFeet(), exit.area)) {
-      if (exit.lockedText && !game.flags.basementUnlocked) {
+      if(exit.canTravel&&!exit.canTravel()){setDialog(exit.lockedLines||['This path is not open yet.']);p.y+=25;}
+      else if (exit.lockedText && !game.flags.basementUnlocked) {
         setDialog(exit.lockedText);
         p.y -= 22;
       } else {
@@ -381,6 +382,7 @@ function drawOverworld() {
   if (game.room === "cottage") drawCottage();
   else if(['cedar','briarway'].includes(game.room)){drawRouteRoom();return;}
   else if(game.room==='city') { drawOvergrownCity(); drawRoomHud(); return; }
+  else if(typeof drawNewChapter==='function'&&drawNewChapter())return;
   else drawBasement();
   drawPlayer();
   if(game.room==='cottage')drawTrailMap();

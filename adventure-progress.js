@@ -27,17 +27,18 @@ function safeAdventure(raw){
  for(const slot of ['weapon','ward','trinket']){const id=p.equipped?.[slot];if(gear.includes(id)&&TRAIL_GEAR[id].slot===slot)equipped[slot]=id;}
  const validNames=CITY_RESIDENTS.map(n=>n.name),cityVoices=Array.isArray(flags.cityVoices)?[...new Set(flags.cityVoices.filter(n=>validNames.includes(n)))]:[],routeCleared={};
  for(const spawn of ROUTE_SPAWNS)if(flags.routeCleared?.[spawn.id]===true)routeCleared[spawn.id]=true;
- const cleanFlags={metMallow:flags.metMallow===true,checkedSoup:flags.checkedSoup===true,basementUnlocked:flags.basementUnlocked===true,bossDefeated:flags.bossDefeated===true,cityUnlocked:flags.cityUnlocked===true||flags.bossDefeated===true,cityPreview:flags.cityPreview===true,briarDefeated:flags.briarDefeated===true,metBriar:flags.metBriar===true,cityVoices,routeCleared,routeHistory:[...new Set((Array.isArray(flags.routeHistory)?flags.routeHistory:Object.keys(routeCleared)).filter(id=>ROUTE_SPAWNS.some(s=>s.id===id)))],questRewards:[...new Set((Array.isArray(flags.questRewards)?flags.questRewards:[]).filter(id=>['first-bell','woodland-guide','city-voices'].includes(id)))],trailChest:flags.trailChest===true};
+ const cleanFlags={metMallow:flags.metMallow===true,checkedSoup:flags.checkedSoup===true,basementUnlocked:flags.basementUnlocked===true,bossDefeated:flags.bossDefeated===true,cityUnlocked:flags.cityUnlocked===true||flags.bossDefeated===true,cityPreview:flags.cityPreview===true,briarDefeated:flags.briarDefeated===true,metBriar:flags.metBriar===true,cityVoices,routeCleared,routeHistory:[...new Set((Array.isArray(flags.routeHistory)?flags.routeHistory:Object.keys(routeCleared)).filter(id=>ROUTE_SPAWNS.some(s=>s.id===id)))],questRewards:[...new Set((Array.isArray(flags.questRewards)?flags.questRewards:[]).filter(id=>['first-bell','woodland-guide','city-voices',...(typeof CHAPTER_QUEST_IDS!=='undefined'?CHAPTER_QUEST_IDS:[])].includes(id)))],trailChest:flags.trailChest===true};
+ if(typeof safeChapterFlags==='function')Object.assign(cleanFlags,safeChapterFlags(flags,cleanFlags));
  const items=Array.isArray(p.items)?p.items.filter(i=>i&&['Warm Milk','Moon Tart','Trail Berry'].includes(i.name)).slice(0,6).map(i=>({name:i.name,heal:i.name==='Warm Milk'?14:i.name==='Moon Tart'?22:8})):[];
- const allowed=['cottage',...(cleanFlags.basementUnlocked?['basement']:[]),...(cleanFlags.cityUnlocked?['cedar','briarway','city']:[])],room=allowed.includes(raw.room)?raw.room:'cottage';
- return {player:{xp,level:levelFromXP(xp),gear,equipped,items:items.length?items:[{name:'Warm Milk',heal:14},{name:'Moon Tart',heal:22}],hp:Number.isFinite(p.hp)?clamp(p.hp,1,54):36},flags:cleanFlags,room};
+ const allowed=['cottage',...(cleanFlags.basementUnlocked?['basement']:[]),...(cleanFlags.cityUnlocked?['cedar','briarway','city']:[]),...(cleanFlags.briarDefeated?['canal']:[]),...(cleanFlags.observatoryOpen?['observatory']:[])],room=allowed.includes(raw.room)?raw.room:'cottage';
+ return {player:{xp,level:levelFromXP(xp),gear,equipped,items:items.length?items:[{name:'Warm Milk',heal:14},{name:'Moon Tart',heal:22}],hp:Number.isFinite(p.hp)?clamp(p.hp,1,60):36},flags:cleanFlags,room};
 }
 function initializeAdventure(){
  Object.assign(game.player,freshProgress());game.flags.routeCleared={};game.flags.trailChest=false;game.flags.routeHistory=[];game.flags.questRewards=[];
  try{const clean=safeAdventure(JSON.parse(localStorage.getItem(ADVENTURE_SAVE)||'null'));if(clean){Object.assign(game.player,clean.player);Object.assign(game.flags,clean.flags);game.room=clean.room;Object.assign(game.player,adventureArrival(clean.room));game.hasAdventureSave=true;}}catch{}
  applyHeroStats();updateAdventureUI();
 }
-function adventureArrival(room){return {cottage:{x:478,y:478,facing:'up'},basement:{x:478,y:480,facing:'up'},cedar:{x:480,y:540,facing:'up'},briarway:{x:480,y:540,facing:'up'},city:{x:480,y:550,facing:'up'}}[room]||{x:478,y:478,facing:'up'};}
+function adventureArrival(room){return {cottage:{x:478,y:478,facing:'up'},basement:{x:478,y:480,facing:'up'},cedar:{x:480,y:540,facing:'up'},briarway:{x:480,y:540,facing:'up'},city:{x:480,y:550,facing:'up'},canal:{x:480,y:548,facing:'up'},observatory:{x:480,y:546,facing:'up'}}[room]||{x:478,y:478,facing:'up'};}
 function saveAdventure(){
  if(!gameReady||game.battle)return false;
  try{const p=game.player;localStorage.setItem(ADVENTURE_SAVE,JSON.stringify({version:1,room:game.room,player:{xp:p.xp,gear:p.gear,equipped:p.equipped,hp:p.hp,items:p.items},flags:game.flags}));game.hasAdventureSave=true;return true;}catch{return false;}
