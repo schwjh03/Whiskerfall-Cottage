@@ -96,7 +96,7 @@ saveAdventure=function(){if(chapterPreviewSnapshot)return false;return saveOutsi
 document.querySelector('#observatory-preview')?.addEventListener('click',()=>{
  if(game.battle||chapterPreviewSnapshot)return;
  chapterPreviewSnapshot={player:structuredClone(game.player),flags:structuredClone(game.flags),room:game.room,mode:game.mode,message:game.message,hasAdventureSave:game.hasAdventureSave};
- Object.assign(game.flags,freshChapterFlags(),{bossDefeated:true,cityUnlocked:true,briarDefeated:true,metMallow:true});
+ game.chapterPreview=true;Object.assign(game.flags,freshChapterFlags(),{bossDefeated:true,cityUnlocked:true,briarDefeated:true,metMallow:true});
  Object.assign(game.player,freshProgress());game.player.xp=180;game.player.level=levelFromXP(180);applyHeroStats();game.player.hp=game.player.maxHp;
  game.message=null;game.mode='overworld';keys.clear();changeRoom('city',{x:480,y:550,facing:'up'});
  document.querySelector('#leave-chapter-preview').hidden=false;
@@ -104,7 +104,7 @@ document.querySelector('#observatory-preview')?.addEventListener('click',()=>{
 });
 document.querySelector('#leave-chapter-preview')?.addEventListener('click',()=>{
  if(!chapterPreviewSnapshot)return;const snapshot=chapterPreviewSnapshot;chapterPreviewSnapshot=null;
- game.battle=null;game.paused=false;game.roomInputLocked=false;document.body?.classList.remove('in-battle');keys.clear();Object.assign(game,snapshot);
+ game.chapterPreview=false;game.battle=null;game.paused=false;game.roomInputLocked=false;document.body?.classList.remove('in-battle');keys.clear();Object.assign(game,snapshot);
  document.querySelector('#leave-chapter-preview').hidden=true;updateDemoInterface();updateAdventureUI();
 });
 const updateBeforeChapter=updateDemoInterface;
